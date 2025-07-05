@@ -1,28 +1,42 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using BCrypt.Net;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using WebApplication1.Data;
 using WebApplication1.Data.Models;
+using WebApplication1.DTOs;
 
 namespace WebApplication1.Services
 {
-    public class AuthenticationService
+
+    public interface IAuthService
+    {
+        Task<string?> Register(AuthenticationDTO request);
+        Task<string?> Login(AuthenticationDTO request);
+        Task<List<User>> GetAllUsers();
+        string HashPassword(string password);
+        bool VerifyPassword(string password, string hashed);
+        string GenerateJwtToken(User user);
+    }
+
+    public class AuthService : IAuthService
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _config;
 
-        public AuthenticationService(AppDbContext context, IConfiguration config)
+        public AuthService(AppDbContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
         }
 
-        public string HashPassword(string password) => BCrypt.Net.BCrypt.HashPassword(password);
+        public string HashPassword(string password) =>
+            BCrypt.Net.BCrypt.HashPassword(password);
 
-        public bool VerifyPassword(string password, string hashed) => BCrypt.Net.BCrypt.Verify(password, hashed);
+        public bool VerifyPassword(string password, string hashed) =>
+            BCrypt.Net.BCrypt.Verify(password, hashed);
 
         public string GenerateJwtToken(User user)
         {
@@ -44,6 +58,36 @@ namespace WebApplication1.Services
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<string?> Register(AuthenticationDTO request)
+        {
+            if (await _context.Users.AnyAsync(u => u.Username == request.Username))
+                return null;
+
+            var user = new User
+            {
+                Username = request.Username,
+                Password = HashPassword(request.Password)
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return "User registered successfully.";
+        }
+
+        public async Task<string?> Login(AuthenticationDTO request)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == request.Username);
+            if (user == null || !VerifyPassword(request.Password, user.Password))
+                return null;
+
+            return GenerateJwtToken(user);
+        }
+
+        public async Task<List<User>> GetAllUsers()
+        {
+            return await _context.Users.ToListAsync();
         }
     }
 }

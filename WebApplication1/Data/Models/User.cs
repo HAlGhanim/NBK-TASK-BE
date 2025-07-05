@@ -4,6 +4,7 @@ namespace WebApplication1.Data.Models
 {
     public class User
     {
+        [Required]
         [Key]
         public int Id { get; set; }
 
