@@ -2,17 +2,10 @@
 using WebApplication1.Data;
 using WebApplication1.Data.Models;
 using WebApplication1.DTOs;
+using WebApplication1.Interfaces;
 
 namespace WebApplication1.Services
 {
-    public interface ICustomerService
-    {
-        Task<List<CustomerDTO>> GetAll();
-        Task<CustomerDTO?> GetByNumber(int number);
-        Task<CustomerDTO> Create(CreateCustomerDTO dto);
-        Task<CustomerDTO?> Update(int number, UpdateCustomerDTO dto);
-        Task<string?> Delete(int number);
-    }
 
     public class CustomerService : ICustomerService
     {

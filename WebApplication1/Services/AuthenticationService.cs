@@ -7,19 +7,10 @@ using System.Text;
 using WebApplication1.Data;
 using WebApplication1.Data.Models;
 using WebApplication1.DTOs;
+using WebApplication1.Interfaces;
 
 namespace WebApplication1.Services
 {
-
-    public interface IAuthService
-    {
-        Task<string?> Register(AuthenticationDTO request);
-        Task<string?> Login(AuthenticationDTO request);
-        Task<List<User>> GetAllUsers();
-        string HashPassword(string password);
-        bool VerifyPassword(string password, string hashed);
-        string GenerateJwtToken(User user);
-    }
 
     public class AuthService : IAuthService
     {

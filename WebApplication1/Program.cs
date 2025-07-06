@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using WebApplication1.Data;
 using WebApplication1.Services;
+using WebApplication1.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularDevClient", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 
 
 var app = builder.Build();
@@ -70,6 +82,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowAngularDevClient");
 
 app.UseHttpsRedirection();
 
