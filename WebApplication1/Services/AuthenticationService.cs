@@ -44,7 +44,7 @@ namespace WebApplication1.Services
                 issuer: "NBK-TASK-BE",
                 audience: "NBK-TASK-FE",
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.Now.AddHours(24),
                 signingCredentials: creds
             );
 

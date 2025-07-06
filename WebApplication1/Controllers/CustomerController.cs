@@ -62,7 +62,7 @@ namespace WebApplication1.Controllers
             if (result == null)
                 return NotFound($"Customer with number {number} not found.");
 
-            return Ok(result);
+            return Ok(new { message = "Customer deleted" });
         }
     }
 }
