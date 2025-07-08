@@ -4,6 +4,81 @@
 
 This application consists of an Angular 20 frontend and a .NET 8 backend API. The communication between these layers is secured using JWT authentication and follows RESTful principles.
 
+## Project Setup
+
+### Prerequisites
+- Visual Studio 2022 or later
+- .NET 8 SDK
+- Node.js (v18 or later)
+- SQL Server (LocalDB or Express)
+- Git
+
+### Backend Setup (.NET 8)
+
+1. **Clone the Backend Repository**
+   ```bash
+   git clone <backend-repository-url>
+   cd WebApplication1
+   ```
+
+2. **Configure User Secrets**
+   - Right-click on the project in Visual Studio
+   - Click on "Manage User Secrets"
+   - This will open the `secrets.json` file
+   - Insert the following configuration:
+   ```json
+   {
+     "Jwt": {
+       "Key": "2b95f93292ed56f68a4f2c9592a6fc7a13b781648f5e34e5fc4cb6f1053f2994"
+     }
+   }
+   ```
+
+3. **Setup Database**
+   - Delete the `Migrations` folder if it exists
+   - Open Package Manager Console in Visual Studio
+   - Run the following commands:
+   ```bash
+   Add-Migration seeded-data
+   Update-Database
+   ```
+
+4. **Run the Backend**
+   - In Visual Studio, select **IIS Express** from the run options
+   - Press F5 or click the Run button
+   - The API will be available at `https://localhost:44336`
+   - Swagger UI will be available at `https://localhost:44336/swagger`
+
+### Frontend Setup (Angular 20)
+
+1. **Clone the Frontend Repository**
+   ```bash
+   git clone <frontend-repository-url>
+   cd NBK-TASK-FE
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   npm i
+   ```
+
+3. **Start the Development Server**
+   ```bash
+   npm start
+   ```
+   - The application will be available at `http://localhost:4200`
+
+### Default Login Credentials
+
+The database is seeded with the following test data:
+
+**User Account:**
+- Username: `azmarafi`
+- Password: `password123`
+
+**Sample Customers:** 
+20 customers are pre-populated (Customer numbers 1-20) with names like Alice, Bob, Charlie, etc.
+
 ## Key Communication Patterns
 
 ### 1. Authentication Flow
@@ -34,6 +109,16 @@ Angular Component → Service → Interceptors → Backend Controller → Servic
 - Toast notifications provide immediate feedback for all operations
 - Modal service handles confirmations and forms
 - Error interceptor catches and displays all HTTP errors
+
+### 6. State Preservation
+- The table component preserves user state through URL query parameters
+- Preserved state includes:
+  - Current page number (`?page=2`)
+  - Page size (`?size=10`)
+  - Search term (`?search=john`)
+  - Sort column and direction (`?sort=name&direction=desc`)
+- This allows users to bookmark, share, or refresh pages without losing their current view
+- State is automatically synchronized with the URL on any table interaction
 
 ## API Endpoints Reference
 
@@ -174,6 +259,13 @@ BaseService (HTTP methods)
 - **ToastService**: Displays success/error notifications
 - **CookieService**: Handles JWT token storage and retrieval
 
+### Table Component Features
+- **Pagination**: Navigate through large datasets with configurable page sizes (5, 10, 20 rows)
+- **Sorting**: Click column headers to sort ascending/descending
+- **Search**: Real-time filtering across all columns
+- **Export**: Download current view as CSV
+- **State Preservation**: All table interactions (page, sort, search, page size) are synced with URL query parameters
+
 ## Development URLs
 
 - **Frontend**: http://localhost:4200
@@ -192,7 +284,3 @@ BaseService (HTTP methods)
 - Name (string, max 255, required)
 - DateOfBirth (DateOnly, required)
 - Gender (string, length 1, required)
-
-### Seeded Data
-- 1 default user: username "azmarafi", password "password123"
-- 20 sample customers (numbers 1-20)
