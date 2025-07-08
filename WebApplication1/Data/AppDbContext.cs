@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data.Models;
+using BCrypt.Net;
 
 namespace WebApplication1.Data
 {
@@ -15,7 +16,6 @@ namespace WebApplication1.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<Customer>().HasData(
                 new Customer { Number = 1, Name = "Alice", DateOfBirth = new DateOnly(1990, 1, 1), Gender = "F" },
                 new Customer { Number = 2, Name = "Bob", DateOfBirth = new DateOnly(1985, 5, 20), Gender = "M" },
@@ -37,6 +37,10 @@ namespace WebApplication1.Data
                 new Customer { Number = 18, Name = "Rachel", DateOfBirth = new DateOnly(1998, 3, 22), Gender = "F" },
                 new Customer { Number = 19, Name = "Steve", DateOfBirth = new DateOnly(1986, 6, 14), Gender = "M" },
                 new Customer { Number = 20, Name = "Tina", DateOfBirth = new DateOnly(1995, 12, 1), Gender = "F" }
+            );
+
+            modelBuilder.Entity<User>().HasData(
+                new User { Id = 1, Username = "azmarafi", Password = BCrypt.Net.BCrypt.HashPassword("password123") }
             );
         }
     }
